@@ -7,10 +7,10 @@ let statusBarItem;
 let textChangeListener;
 function activate(context) {
     console.log('Character Counter extension is now active!');
-    // 创建状态栏项
+    // 创建状态栏项 - 显示所有字符数量
     statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-    statusBarItem.text = "汉字: 0";
-    statusBarItem.tooltip = "当前文件的汉字数量";
+    statusBarItem.text = "字符: 0";
+    statusBarItem.tooltip = "当前文件的有效字符数量（汉字和字母）";
     statusBarItem.show();
     // 注册命令
     let disposable = vscode.commands.registerCommand('char-counter.countCharacters', () => {
@@ -43,14 +43,14 @@ function debounce(func, wait) {
 function updateStatusBarAndCheckCounters() {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
-        statusBarItem.text = "汉字: 0";
+        statusBarItem.text = "字符: 0";
         return;
     }
     const document = editor.document;
     const text = document.getText();
-    // 更新状态栏显示当前文件的汉字数量
-    const totalChineseCount = countChineseCharacters(text);
-    statusBarItem.text = `汉字: ${totalChineseCount}`;
+    // 更新状态栏显示当前文件的所有有效字符数量
+    const totalValidCount = countValidCharacters(text);
+    statusBarItem.text = `字符: ${totalValidCount}`;
     // 检查并处理计数器标签
     handleCounterTags(document, editor);
 }
@@ -75,15 +75,14 @@ function handleCounterTags(document, editor) {
                 if (charCount >= goalNums) {
                     // 找到最后一个字符的位置
                     const lastCharPosition = findLastCharacterPosition(document, startPos, endPos);
-                    // 创建分隔线并插入新的计数器标签
-                    const separatorLine = createSeparatorLine(goalNums);
+                    // 创建分隔线
+                    const separatorLine = createSeparatorLine();
                     const insertPos = new vscode.Position(lastCharPosition.line + 1, 0);
-                    const newCounterTag = '\n<counter>\n</counter>\n';
-                    edits.push(vscode.TextEdit.insert(insertPos, separatorLine + newCounterTag));
+                    edits.push(vscode.TextEdit.insert(insertPos, '\n' + separatorLine + '\n'));
                 }
             }
         }
-        applyEdits(document, editor, edits);
+        applyEdits(document, edits);
     }
     catch (error) {
         console.error('Error in character counter:', error);
@@ -111,8 +110,8 @@ function checkExistingSeparator(document, lineNumber) {
         if (lineText.includes('<counter>')) {
             break;
         }
-        // 精确匹配分隔线格式：以多个横线开头，包含END，以多个横线结尾
-        if (/^-+.*\d{12}\|\d+END-+$/.test(lineText)) {
+        // 精确匹配分隔线格式：以多个横线开头，包含END，以多个横线结尾（不带goalNums）
+        if (/^-+.*\d{12}\|END-+$/.test(lineText)) {
             return true;
         }
         // 如果遇到counter结束标签，继续检查（分隔线应该在</counter>之后）
@@ -122,48 +121,27 @@ function checkExistingSeparator(document, lineNumber) {
     }
     return false;
 }
-// 创建分隔线
-function createSeparatorLine(goalNums) {
+// 创建分隔线（新格式，不包含goalNums）
+function createSeparatorLine() {
     const now = new Date();
     const timestamp = now.getFullYear().toString() +
         (now.getMonth() + 1).toString().padStart(2, '0') +
         now.getDate().toString().padStart(2, '0') +
         now.getHours().toString().padStart(2, '0') +
         now.getMinutes().toString().padStart(2, '0');
-    return `-------------------${timestamp}|${goalNums}END--------------------`;
+    return `-------------------${timestamp}|END--------------------`;
 }
-// 应用编辑并移动光标
-function applyEdits(document, editor, edits) {
+// 应用编辑
+function applyEdits(document, edits) {
     if (edits.length > 0) {
         const edit = new vscode.WorkspaceEdit();
         edit.set(document.uri, edits);
-        vscode.workspace.applyEdit(edit).then(success => {
-            if (success) {
-                // 移动光标到新生成的counter标签内
-                setTimeout(() => {
-                    const newText = document.getText();
-                    const lastCounterMatch = newText.lastIndexOf('<counter>');
-                    if (lastCounterMatch !== -1) {
-                        const contentStart = lastCounterMatch + '<counter>'.length;
-                        const position = document.positionAt(contentStart);
-                        // 移动到新标签内并缩进
-                        editor.selection = new vscode.Selection(position, position);
-                        editor.revealRange(new vscode.Range(position, position));
-                    }
-                }, 100);
-            }
-        });
+        vscode.workspace.applyEdit(edit);
     }
 }
-// 统计有效字符（汉字和字母）
+// 统计有效字符（汉字和字母） - 用于状态栏显示和计数器统计
 function countValidCharacters(text) {
     const regex = /[\u4e00-\u9fa5a-zA-Z]/g;
-    const matches = text.match(regex);
-    return matches ? matches.length : 0;
-}
-// 统计汉字字符（仅用于状态栏显示）
-function countChineseCharacters(text) {
-    const regex = /[\u4e00-\u9fa5]/g;
     const matches = text.match(regex);
     return matches ? matches.length : 0;
 }
