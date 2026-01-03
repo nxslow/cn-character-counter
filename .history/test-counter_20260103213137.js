@@ -25,8 +25,8 @@ function testCharacterCounter() {
     console.log('测试3 - 查找字符位置:');
     console.log('输入:', testText3);
     console.log('第5个字符位置:', pos3, '字符:', testText3[pos3]);
-    console.log('预期: 位置4, 字符 "字"');
-    console.log('测试结果:', pos3 === 4 && testText3[pos3] === '字' ? '✓ 通过' : '✗ 失败');
+    console.log('预期: 位置5, 字符 "字"');
+    console.log('测试结果:', pos3 === 5 && testText3[pos3] === '字' ? '✓ 通过' : '✗ 失败');
 }
 
 // 核心函数

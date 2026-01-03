@@ -8,8 +8,8 @@ function testCharacterCounter() {
     console.log('测试1 - 统计字符:');
     console.log('输入:', testText1);
     console.log('统计结果:', count1, '个有效字符');
-    console.log('预期: 4个汉字 + 11个字母 + 1个逗号 + 1个句号 = 16个字符');
-    console.log('测试结果:', count1 === 16 ? '✓ 通过' : '✗ 失败');
+    console.log('预期: 4个汉字 + 11个字母 + 1个逗号 + 1个句号 = 17个字符');
+    console.log('测试结果:', count1 === 17 ? '✓ 通过' : '✗ 失败');
     console.log('');
 
     // 测试用例2: 分隔线生成
@@ -25,8 +25,8 @@ function testCharacterCounter() {
     console.log('测试3 - 查找字符位置:');
     console.log('输入:', testText3);
     console.log('第5个字符位置:', pos3, '字符:', testText3[pos3]);
-    console.log('预期: 位置4, 字符 "字"');
-    console.log('测试结果:', pos3 === 4 && testText3[pos3] === '字' ? '✓ 通过' : '✗ 失败');
+    console.log('预期: 位置5, 字符 "字"');
+    console.log('测试结果:', pos3 === 5 && testText3[pos3] === '字' ? '✓ 通过' : '✗ 失败');
 }
 
 // 核心函数

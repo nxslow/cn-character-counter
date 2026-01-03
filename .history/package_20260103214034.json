@@ -28,11 +28,6 @@
           "type": "number",
           "default": 10,
           "description": "触发分隔线的字符基数（达到正整数倍时添加分隔线）"
-        },
-        "charCounter.enableSeparator": {
-          "type": "boolean",
-          "default": false,
-          "description": "是否启用分隔线功能"
         }
       }
     }
