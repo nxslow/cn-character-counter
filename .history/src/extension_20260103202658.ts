@@ -129,25 +129,25 @@ function findLastCharacterPosition(document: vscode.TextDocument, startOffset: n
     
     return document.positionAt(lastCharOffset);
 }
+
 // 检查是否存在分隔线
 function checkExistingSeparator(document: vscode.TextDocument, lineNumber: number): boolean {
+    // 检查从当前行开始的后续行，直到遇到新的counter标签或文档结束
     for (let i = lineNumber + 1; i < document.lineCount; i++) {
-        const lineText = document.lineAt(i).text.trim();
+        const lineText = document.lineAt(i).text;
         
-        // 如果遇到新的counter开始标签，停止检查（属于另一个counter的作用域）
+        // 精确匹配分隔线格式：以破折号开头，包含"END"并以破折号结尾
+        const separatorPattern = /^-+.*END-+$/;
+        if (separatorPattern.test(lineText.trim())) {
+            return true;
+        }
+        
+        // 如果遇到新的counter标签开始，停止检查（表明进入了新的counter区域）
         if (lineText.includes('<counter>')) {
             break;
         }
         
-        // 精确匹配分隔线格式：以多个横线开头，包含END，以多个横线结尾
-        if (/^-+.*\d{12}\|\d+END-+$/.test(lineText)) {
-            return true;
-        }
-        
-        // 如果遇到counter结束标签，继续检查（分隔线应该在</counter>之后）
-        if (lineText.includes('</counter>')) {
-            continue;
-        }
+        // 如果遇到counter标签结束，继续检查（分隔线应该在counter标签结束之后）
     }
     return false;
 }

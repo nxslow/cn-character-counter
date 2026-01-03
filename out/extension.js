@@ -105,14 +105,19 @@ function findLastCharacterPosition(document, startOffset, endOffset) {
 }
 // 检查是否存在分隔线
 function checkExistingSeparator(document, lineNumber) {
-    for (let i = lineNumber + 1; i < Math.min(lineNumber + 10, document.lineCount); i++) {
-        const lineText = document.lineAt(i).text;
-        if (lineText.includes('goalNumsEND')) {
-            return true;
-        }
-        // 如果遇到新的counter标签，停止检查
+    for (let i = lineNumber + 1; i < document.lineCount; i++) {
+        const lineText = document.lineAt(i).text.trim();
+        // 如果遇到新的counter开始标签，停止检查（属于另一个counter的作用域）
         if (lineText.includes('<counter>')) {
             break;
+        }
+        // 精确匹配分隔线格式：以多个横线开头，包含END，以多个横线结尾
+        if (/^-+.*\d{12}\|\d+END-+$/.test(lineText)) {
+            return true;
+        }
+        // 如果遇到counter结束标签，继续检查（分隔线应该在</counter>之后）
+        if (lineText.includes('</counter>')) {
+            continue;
         }
     }
     return false;
