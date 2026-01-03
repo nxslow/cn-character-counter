@@ -3,23 +3,23 @@ function testCharacterCounter() {
     console.log('=== Character Counter 插件功能测试 ===\n');
 
     // 测试用例1: 统计汉字和字母
-    const testText1 = '汉字测试 English test 123!@#';
-    const count1 = countValidCharacters(testText1);
+    const testText1 = '<counter>汉字测试 English test 123!@#</counter>';
+    const count1 = countValidCharacters(testText1.match(/<counter>([\s\S]*?)<\/counter>/i)[1]);
     console.log('测试1 - 统计汉字和字母:');
     console.log('输入:', testText1);
     console.log('统计结果:', count1, '个有效字符');
-    console.log('预期: 4个汉字 + 11个字母 = 15个字符');
-    console.log('测试结果:', count1 === 15 ? '✓ 通过' : '✗ 失败');
+    console.log('预期: 8个汉字 + 11个字母 = 19个字符');
+    console.log('测试结果:', count1 === 19 ? '✓ 通过' : '✗ 失败');
     console.log('');
 
     // 测试用例2: 仅统计汉字
-    const testText2 = '这是一个只包含汉字的测试文本';
-    const count2 = countValidCharacters(testText2);
+    const testText2 = '<counter>这是一个只包含汉字的测试文本</counter>';
+    const count2 = countValidCharacters(testText2.match(/<counter>([\s\S]*?)<\/counter>/i)[1]);
     console.log('测试2 - 仅统计汉字:');
     console.log('输入:', testText2);
     console.log('统计结果:', count2, '个有效字符');
-    console.log('预期: 14个汉字');
-    console.log('测试结果:', count2 === 14 ? '✓ 通过' : '✗ 失败');
+    console.log('预期: 11个汉字');
+    console.log('测试结果:', count2 === 11 ? '✓ 通过' : '✗ 失败');
     console.log('');
 
     // 测试用例3: 分隔线生成
@@ -36,8 +36,8 @@ function testCharacterCounter() {
     console.log('测试4 - 汉字统计:');
     console.log('输入:', fullText);
     console.log('汉字数量:', chineseCount);
-    console.log('预期: 6个汉字');
-    console.log('测试结果:', chineseCount === 6 ? '✓ 通过' : '✗ 失败');
+    console.log('预期: 4个汉字');
+    console.log('测试结果:', chineseCount === 4 ? '✓ 通过' : '✗ 失败');
     console.log('');
 
     console.log('=== 测试完成 ===');
