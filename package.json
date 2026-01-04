@@ -1,6 +1,6 @@
 {
-  "name": "char-counter",
-  "displayName": "Character Counter",
+  "name": "cn-character-counter",
+  "displayName": "ChineseHanzi-Counter",
   "description": "实时显示字符数量并在达到目标倍数时添加分隔线",
   "version": "1.0.0",
   "publisher": "nxslow",
